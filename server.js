@@ -2,10 +2,10 @@
  * Module dependencies.
  */
 var express = require('express'),
-    fs = require('fs'),
-    passport = require('passport'),
-    logger = require('mean-logger'),
-    io = require('socket.io');
+fs = require('fs'),
+passport = require('passport'),
+logger = require('mean-logger'),
+io = require('socket.io');
 
 /**
  * Main application entry file.
@@ -19,8 +19,10 @@ var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development',
     auth = require('./config/middlewares/authorization'),
     mongoose = require('mongoose');
 
+
 //Bootstrap db connection
-var db = mongoose.connect(config.db);
+mongoose.connect(config.db);
+
 
 //Bootstrap models
 var models_path = __dirname + '/app/models';
@@ -29,7 +31,7 @@ var walk = function(path) {
         var newPath = path + '/' + file;
         var stat = fs.statSync(newPath);
         if (stat.isFile()) {
-            if (/(.*)\.(js|coffee)/.test(file)) {
+            if (/\.(js|coffee)$/.test(file)) {
                 require(newPath);
             }
         } else if (stat.isDirectory()) {
@@ -57,7 +59,7 @@ require('./config/routes')(app, passport, auth);
 //Start the app by listening on <port>
 var port = config.port;
 var server = app.listen(port);
-var ioObj = io.listen(server, { log: false });
+var ioObj = io.listen(server, { log: true });
 //game logic handled here
 require('./config/socket/socket')(ioObj);
 console.log('Express app started on port ' + port);
